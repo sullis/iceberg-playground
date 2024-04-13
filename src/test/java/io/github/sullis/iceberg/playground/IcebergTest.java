@@ -4,10 +4,13 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
+import org.apache.iceberg.Schema;
+import org.apache.iceberg.Table;
 import org.apache.iceberg.aws.AwsProperties;
 import org.apache.iceberg.aws.dynamodb.DynamoDbCatalog;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
+import org.apache.iceberg.inmemory.InMemoryFileIO;
 import org.apache.iceberg.io.FileIO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +29,6 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.mock;
 
 public class IcebergTest {
 
@@ -64,7 +66,7 @@ public class IcebergTest {
     final String path = "path-" + UUID.randomUUID();
     final Namespace namespace = Namespace.of("namespace-" + UUID.randomUUID());
     final AwsProperties awsProperties = new AwsProperties();
-    final FileIO fileIo = mock(FileIO.class);
+    final FileIO fileIo = new InMemoryFileIO();
     try (DynamoDbClient dbClient = createDynamoDbClient(sdkHttpClient)) {
       assertThat(dbClient).isNotNull();
       DynamoDbCatalog catalog = new DynamoDbCatalog();
@@ -74,6 +76,12 @@ public class IcebergTest {
       catalog.createNamespace(namespace);
       List<TableIdentifier> listTablesResult = catalog.listTables(namespace);
       assertThat(listTablesResult).isEmpty();
+      final String tableName = "tableName-" + UUID.randomUUID();
+      final TableIdentifier tableIdentifier = TableIdentifier.of(namespace, tableName);
+      final Schema schema = new Schema();
+      final Table table = catalog.createTable(tableIdentifier, schema);
+      assertThat(table.name()).isNotNull();
+      assertThat(table.location()).startsWith(path + "/");
       catalog.close();
     }
   }
