@@ -69,20 +69,22 @@ public class IcebergTest {
     final FileIO fileIo = new InMemoryFileIO();
     try (DynamoDbClient dbClient = createDynamoDbClient(sdkHttpClient)) {
       assertThat(dbClient).isNotNull();
-      DynamoDbCatalog catalog = new DynamoDbCatalog();
-      Method initialize = catalog.getClass().getDeclaredMethod("initialize", String.class, String.class, AwsProperties.class, DynamoDbClient.class, FileIO.class);
-      initialize.setAccessible(true);
-      initialize.invoke(catalog, catalogName, path, awsProperties, dbClient, fileIo);
-      catalog.createNamespace(namespace);
-      List<TableIdentifier> listTablesResult = catalog.listTables(namespace);
-      assertThat(listTablesResult).isEmpty();
-      final String tableName = "tableName-" + UUID.randomUUID();
-      final TableIdentifier tableIdentifier = TableIdentifier.of(namespace, tableName);
-      final Schema schema = new Schema();
-      final Table table = catalog.createTable(tableIdentifier, schema);
-      assertThat(table.name()).isNotNull();
-      assertThat(table.location()).startsWith(path + "/");
-      catalog.close();
+      try (DynamoDbCatalog catalog = new DynamoDbCatalog()) {
+        Method initialize = catalog.getClass()
+            .getDeclaredMethod("initialize", String.class, String.class, AwsProperties.class, DynamoDbClient.class,
+                FileIO.class);
+        initialize.setAccessible(true);
+        initialize.invoke(catalog, catalogName, path, awsProperties, dbClient, fileIo);
+        catalog.createNamespace(namespace);
+        List<TableIdentifier> listTablesResult = catalog.listTables(namespace);
+        assertThat(listTablesResult).isEmpty();
+        final String tableName = "tableName-" + UUID.randomUUID();
+        final TableIdentifier tableIdentifier = TableIdentifier.of(namespace, tableName);
+        final Schema schema = new Schema();
+        final Table table = catalog.createTable(tableIdentifier, schema);
+        assertThat(table.name()).isNotNull();
+        assertThat(table.location()).startsWith(path + "/");
+      }
     }
   }
 
