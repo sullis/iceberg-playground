@@ -1,16 +1,24 @@
 package io.github.sullis.iceberg.playground;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+import org.apache.commons.io.IOUtils;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.aws.AwsProperties;
 import org.apache.iceberg.aws.dynamodb.DynamoDbCatalog;
+import org.apache.iceberg.aws.s3.S3FileIOProperties;
+import org.apache.iceberg.aws.s3.S3InputFile;
+import org.apache.iceberg.aws.s3.S3OutputFile;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.inmemory.InMemoryFileIO;
 import org.apache.iceberg.io.FileIO;
+import org.apache.iceberg.metrics.MetricsContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +31,9 @@ import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.CreateBucketResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,6 +84,32 @@ public class IcebergTest {
     }
   }
 
+  @Test
+  public void s3() throws Exception {
+    final byte[] payload = "payload123".getBytes(StandardCharsets.UTF_8);
+    final String bucket = "bucket-" + UUID.randomUUID();
+    final String pathToFile = "/path/" + UUID.randomUUID();
+    final String location = "s3://" + bucket + pathToFile;
+    final S3FileIOProperties s3FileIoProperties = new S3FileIOProperties();
+    final MetricsContext metricsContext = MetricsContext.nullMetrics();
+    try (S3Client s3Client = createS3Client()) {
+      CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(bucket).build();
+      CreateBucketResponse createBucketResponse = s3Client.createBucket(createBucketRequest);
+      assertThat(createBucketResponse.sdkHttpResponse().isSuccessful()).isTrue();
+      S3OutputFile s3OutputFile = S3OutputFile.fromLocation(location, s3Client, s3FileIoProperties, metricsContext);
+      OutputStream output = s3OutputFile.create();
+      output.write(payload);
+      output.flush();
+      output.close();
+
+      S3InputFile s3InputFile = S3InputFile.fromLocation(location, s3Client, s3FileIoProperties, metricsContext);
+      assertThat(s3InputFile.getLength()).isEqualTo(payload.length);
+      try (InputStream inputStream = s3InputFile.newStream()) {
+        byte[] data = IOUtils.toByteArray(inputStream);
+        assertThat(data).isEqualTo(payload);
+      }
+    }
+  }
   private DynamoDbCatalog createDynamoDbCatalog(String catalogName, String path, DynamoDbClient dbClient, AwsProperties awsProperties, FileIO fileIo) throws Exception {
     DynamoDbCatalog catalog = new DynamoDbCatalog();
     Method initializeMethod = catalog.getClass()
@@ -85,6 +122,15 @@ public class IcebergTest {
 
   private DynamoDbClient createDynamoDbClient() {
     return DynamoDbClient.builder()
+        .httpClient(AWS_SDK_HTTP_CLIENT_BUILDER.build())
+        .endpointOverride(LOCALSTACK.getEndpoint())
+        .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
+        .region(REGION)
+        .build();
+  }
+
+  private S3Client createS3Client() {
+    return S3Client.builder()
         .httpClient(AWS_SDK_HTTP_CLIENT_BUILDER.build())
         .endpointOverride(LOCALSTACK.getEndpoint())
         .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
