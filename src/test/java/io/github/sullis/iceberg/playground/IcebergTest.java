@@ -27,6 +27,8 @@ import org.testcontainers.utility.DockerImageName;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -121,20 +123,21 @@ public class IcebergTest {
   }
 
   private DynamoDbClient createDynamoDbClient() {
-    return DynamoDbClient.builder()
-        .httpClient(AWS_SDK_HTTP_CLIENT_BUILDER.build())
-        .endpointOverride(LOCALSTACK.getEndpoint())
-        .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
-        .region(REGION)
-        .build();
+    return (DynamoDbClient) configure(DynamoDbClient.builder()).build();
   }
 
   private S3Client createS3Client() {
-    return S3Client.builder()
-        .httpClient(AWS_SDK_HTTP_CLIENT_BUILDER.build())
-        .endpointOverride(LOCALSTACK.getEndpoint())
+    return (S3Client) configure(S3Client.builder()).build();
+  }
+
+  private AwsClientBuilder<?, ?> configure(AwsClientBuilder<?, ?> builder) {
+    if (builder instanceof SdkSyncClientBuilder) {
+      ((SdkSyncClientBuilder<?, ?>) builder).httpClient(AWS_SDK_HTTP_CLIENT_BUILDER.build());
+    } else {
+      throw new IllegalStateException("unexpected AwsClientBuilder");
+    }
+    return builder.endpointOverride(LOCALSTACK.getEndpoint())
         .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
-        .region(REGION)
-        .build();
+        .region(REGION);
   }
 }
