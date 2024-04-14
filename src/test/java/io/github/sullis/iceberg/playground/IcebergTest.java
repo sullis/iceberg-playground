@@ -69,12 +69,7 @@ public class IcebergTest {
     final FileIO fileIo = new InMemoryFileIO();
     try (DynamoDbClient dbClient = createDynamoDbClient(sdkHttpClient)) {
       assertThat(dbClient).isNotNull();
-      try (DynamoDbCatalog catalog = new DynamoDbCatalog()) {
-        Method initialize = catalog.getClass()
-            .getDeclaredMethod("initialize", String.class, String.class, AwsProperties.class, DynamoDbClient.class,
-                FileIO.class);
-        initialize.setAccessible(true);
-        initialize.invoke(catalog, catalogName, path, awsProperties, dbClient, fileIo);
+      try (DynamoDbCatalog catalog = createDynamoDbCatalog(catalogName, path, dbClient, awsProperties, fileIo)) {
         catalog.createNamespace(namespace);
         List<TableIdentifier> listTablesResult = catalog.listTables(namespace);
         assertThat(listTablesResult).isEmpty();
@@ -86,6 +81,16 @@ public class IcebergTest {
         assertThat(table.location()).startsWith(path + "/");
       }
     }
+  }
+
+  private DynamoDbCatalog createDynamoDbCatalog(String catalogName, String path, DynamoDbClient dbClient, AwsProperties awsProperties, FileIO fileIo) throws Exception {
+    DynamoDbCatalog catalog = new DynamoDbCatalog();
+    Method initializeMethod = catalog.getClass()
+        .getDeclaredMethod("initialize", String.class, String.class, AwsProperties.class, DynamoDbClient.class,
+            FileIO.class);
+    initializeMethod.setAccessible(true);
+    initializeMethod.invoke(catalog, catalogName, path, awsProperties, dbClient, fileIo);
+    return catalog;
   }
 
   private DynamoDbClient createDynamoDbClient(final SdkHttpClient sdkHttpClient) {
