@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class IcebergTest {
+  private static final SdkHttpClient.Builder<?> AWS_SDK_HTTP_CLIENT_BUILDER = ApacheHttpClient.builder();
 
   private static final LocalStackContainer LOCALSTACK = new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.3.0"))
       .withServices(LocalStackContainer.Service.DYNAMODB, LocalStackContainer.Service.S3);
@@ -83,9 +84,8 @@ public class IcebergTest {
   }
 
   private DynamoDbClient createDynamoDbClient() {
-    SdkHttpClient sdkHttpClient = ApacheHttpClient.builder().build();
     return DynamoDbClient.builder()
-        .httpClient(sdkHttpClient)
+        .httpClient(AWS_SDK_HTTP_CLIENT_BUILDER.build())
         .endpointOverride(LOCALSTACK.getEndpoint())
         .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
         .region(REGION)
