@@ -3,7 +3,6 @@ package io.github.sullis.iceberg.playground;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.aws.AwsProperties;
@@ -14,9 +13,7 @@ import org.apache.iceberg.inmemory.InMemoryFileIO;
 import org.apache.iceberg.io.FileIO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -28,7 +25,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class IcebergTest {
 
@@ -53,21 +49,14 @@ public class IcebergTest {
     }
   }
 
-  static Stream<Arguments> awsSdkHttpClients() {
-    return Stream.of(
-        arguments("apacheHttpClient", ApacheHttpClient.builder().build())
-    );
-  }
-
-  @ParameterizedTest
-  @MethodSource("awsSdkHttpClients")
-  public void dynamodDbCatalog(final String sdkHttpClientName, final SdkHttpClient sdkHttpClient) throws Throwable {
+  @Test
+  public void dynamodDbCatalog() throws Throwable {
     final String catalogName = "catalogName-" + UUID.randomUUID();
     final String path = "path-" + UUID.randomUUID();
     final Namespace namespace = Namespace.of("namespace-" + UUID.randomUUID());
     final AwsProperties awsProperties = new AwsProperties();
     final FileIO fileIo = new InMemoryFileIO();
-    try (DynamoDbClient dbClient = createDynamoDbClient(sdkHttpClient)) {
+    try (DynamoDbClient dbClient = createDynamoDbClient()) {
       assertThat(dbClient).isNotNull();
       try (DynamoDbCatalog catalog = createDynamoDbCatalog(catalogName, path, dbClient, awsProperties, fileIo)) {
         catalog.createNamespace(namespace);
@@ -93,7 +82,8 @@ public class IcebergTest {
     return catalog;
   }
 
-  private DynamoDbClient createDynamoDbClient(final SdkHttpClient sdkHttpClient) {
+  private DynamoDbClient createDynamoDbClient() {
+    SdkHttpClient sdkHttpClient = ApacheHttpClient.builder().build();
     return DynamoDbClient.builder()
         .httpClient(sdkHttpClient)
         .endpointOverride(LOCALSTACK.getEndpoint())
