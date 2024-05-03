@@ -20,6 +20,7 @@
     <logback.version>1.5.6</logback.version>
     <slf4j.version>2.0.13</slf4j.version>
     <skip.tests>false</skip.tests>
+    <nessie.version>0.81.0</nessie.version>
   </properties>
 
     <dependencyManagement>
@@ -78,6 +79,12 @@
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
       <version>2.7.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectnessie.nessie</groupId>
+      <artifactId>nessie-model</artifactId>
+      <version>${nessie.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
