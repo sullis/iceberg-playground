@@ -3,11 +3,14 @@ package io.github.sullis.iceberg.playground;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.projectnessie.minio.MinioExtension;
 import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@ExtendWith(MinioExtension.class)
 public class NessieCatalogTest {
   private static final NessieContainer NESSIE_CONTAINER = new NessieContainer(DockerImageName.parse("ghcr.io/projectnessie/nessie:0.81.1"));
 
