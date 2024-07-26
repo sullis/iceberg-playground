@@ -20,7 +20,7 @@
     <logback.version>1.5.6</logback.version>
     <slf4j.version>2.0.13</slf4j.version>
     <skip.tests>false</skip.tests>
-    <nessie.version>0.93.1</nessie.version>
+    <nessie.version>0.94.1</nessie.version>
   </properties>
 
     <dependencyManagement>
