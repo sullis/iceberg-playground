@@ -2,6 +2,9 @@ package io.github.sullis.iceberg.playground;
 
 import java.util.HashMap;
 import java.util.List;
+import org.apache.iceberg.DataFile;
+import org.apache.iceberg.DataFiles;
+import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.catalog.Namespace;
@@ -28,9 +31,21 @@ public class InMemoryCatalogTest {
     var listTablesResult = catalog.listTables(namespace);
     assertThat(listTablesResult).isEmpty();
     TableIdentifier tableId = TableIdentifier.of(namespace, "foobar");
-    var columns = List.of(Types.NestedField.of(-1, false, "field1", Types.StringType.get(), "doc"));
+    var columns = List.of(Types.NestedField.of(-1, false, "c1", Types.StringType.get(), "doc"));
     Schema schema = new Schema(columns);
     Table table = catalog.createTable(tableId, schema);
     assertThat(catalog.listTables(namespace)).hasSize(1);
+
+    PartitionSpec spec = PartitionSpec.builderFor(schema).identity("c1").build();
+
+    DataFile fileA = DataFiles.builder(spec)
+            .withPath("/path/to/data-a.parquet")
+            .withFileSizeInBytes(10)
+            .withPartitionPath("c1=0") // easy way to set partition data for now
+            .withRecordCount(1)
+            .build();
+    table.newFastAppend()
+        .appendFile(fileA)
+        .commit();
   }
 }
