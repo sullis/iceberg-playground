@@ -74,5 +74,6 @@ public class InMemoryCatalogTest {
     SeekableInputStream inputStream = inputFile.newStream();
     assertThat(inputStream).asString(StandardCharsets.UTF_8)
         .isEqualTo("Hello");
+    inputStream.close();
   }
 }
