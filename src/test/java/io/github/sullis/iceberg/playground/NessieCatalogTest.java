@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MinioExtension.class)
 public class NessieCatalogTest {
-  private static final NessieContainer NESSIE_CONTAINER = new NessieContainer(DockerImageName.parse("ghcr.io/projectnessie/nessie:0.81.1"));
+  private static final NessieContainer NESSIE_CONTAINER = new NessieContainer(DockerImageName.parse("ghcr.io/projectnessie/nessie"));
 
   @BeforeAll
   public static void startContainers() {
