@@ -63,8 +63,8 @@ public class InMemoryCatalogTest {
     Table loadTableResult = catalog.loadTable(tableId);
     FileIO io = loadTableResult.io();
     assertThat(io).isInstanceOf(InMemoryFileIO.class);
-    String outputPath = "test-path-" + UUID.randomUUID();
-    OutputFile outputFile = io.newOutputFile(outputPath);
+    String path = "test-path-" + UUID.randomUUID();
+    OutputFile outputFile = io.newOutputFile(path);
     PositionOutputStream pos = outputFile.create();
     pos.write("Hello".getBytes(StandardCharsets.UTF_8));
     pos.flush();
