@@ -47,5 +47,8 @@ public class InMemoryCatalogTest {
     table.newFastAppend()
         .appendFile(fileA)
         .commit();
+
+    assertThat(catalog.namespaceExists(namespace)).isTrue();
+    assertThat(catalog.listNamespaces()).hasSize(1);
   }
 }
