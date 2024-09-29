@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import org.apache.commons.io.IOUtils;
 import org.apache.iceberg.DataFile;
 import org.apache.iceberg.DataFiles;
 import org.apache.iceberg.PartitionSpec;
@@ -27,35 +26,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InMemoryCatalogTest {
 
-  private InMemoryCatalog catalog;
-
   @Test
   public void happyPath()
       throws IOException {
+    final String columnName = "c1";
     Namespace namespace = Namespace.of("test" + System.currentTimeMillis());
     String catalogName = "catname" + System.currentTimeMillis();
-    catalog = new InMemoryCatalog();
+    InMemoryCatalog catalog = new InMemoryCatalog();
     catalog.initialize(catalogName, new HashMap<>());
     catalog.createNamespace(namespace);
     var listTablesResult = catalog.listTables(namespace);
     assertThat(listTablesResult).isEmpty();
     TableIdentifier tableId = TableIdentifier.of(namespace, "foobar");
-    var columns = List.of(Types.NestedField.of(-1, false, "c1", Types.StringType.get(), "doc"));
+    var columns = List.of(Types.NestedField.of(-1, false, columnName, Types.StringType.get(), "doc"));
     Schema schema = new Schema(columns);
     Table table = catalog.createTable(tableId, schema);
     assertThat(catalog.listTables(namespace)).hasSize(1);
 
     PartitionSpec spec = PartitionSpec.builderFor(schema).identity("c1").build();
 
-    DataFile fileA = DataFiles.builder(spec)
-            .withPath("/path/to/data-a.parquet")
-            .withFileSizeInBytes(10)
-            .withPartitionPath("c1=0") // easy way to set partition data for now
-            .withRecordCount(1)
-            .build();
-    table.newFastAppend()
-        .appendFile(fileA)
-        .commit();
+    DataFile fileA = DataFiles.builder(spec).withPath("/path/to/data-a.parquet").withFileSizeInBytes(10)
+        .withPartitionPath(columnName + "=0") // easy way to set partition data for now
+        .withRecordCount(1).build();
+    table.newFastAppend().appendFile(fileA).commit();
 
     assertThat(catalog.namespaceExists(namespace)).isTrue();
     assertThat(catalog.listNamespaces()).hasSize(1);
@@ -72,8 +65,7 @@ public class InMemoryCatalogTest {
     InputFile inputFile = outputFile.toInputFile();
     assertThat(inputFile.exists()).isTrue();
     SeekableInputStream inputStream = inputFile.newStream();
-    assertThat(inputStream).asString(StandardCharsets.UTF_8)
-        .isEqualTo("Hello");
+    assertThat(inputStream).asString(StandardCharsets.UTF_8).isEqualTo("Hello");
     inputStream.close();
   }
 }
