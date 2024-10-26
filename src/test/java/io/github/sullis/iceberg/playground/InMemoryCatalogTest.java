@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.commons.io.IOUtils;
 import org.apache.iceberg.AppendFiles;
 import org.apache.iceberg.BaseTable;
 import org.apache.iceberg.DataFile;
@@ -27,6 +26,7 @@ import org.apache.iceberg.io.SeekableInputStream;
 import org.apache.iceberg.types.Types;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.iceberg.types.Types.NestedField.required;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +47,7 @@ public class InMemoryCatalogTest {
     assertThat(listTablesResult).isEmpty();
 
     TableIdentifier tableId = TableIdentifier.of(namespace, tableName);
-    var columns = List.of(Types.NestedField.of(-1, false, "c1", Types.StringType.get(), "doc"));
+    var columns = List.of(required(-1, "c1", Types.StringType.get()));
     final Schema schema = new Schema(columns);
     Table table = catalog.createTable(tableId, schema);
     assertThat(catalog.listTables(namespace)).hasSize(1);
