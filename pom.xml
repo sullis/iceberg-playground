@@ -102,13 +102,11 @@
     <dependency>
       <groupId>org.apache.iceberg</groupId>
       <artifactId>iceberg-flink-${flink.version}</artifactId>
-      <version>${iceberg.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.iceberg</groupId>
       <artifactId>iceberg-flink-runtime-${flink.version}</artifactId>
-      <version>${iceberg.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
