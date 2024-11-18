@@ -17,7 +17,6 @@
 
   <properties>
     <junit.version>5.11.3</junit.version>
-    <flink.version>1.20</flink.version>
     <logback.version>1.5.12</logback.version>
     <iceberg.version>1.7.0</iceberg.version>
     <slf4j.version>2.0.16</slf4j.version>
@@ -97,16 +96,6 @@
     <dependency>
       <groupId>org.apache.iceberg</groupId>
       <artifactId>iceberg-arrow</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.iceberg</groupId>
-      <artifactId>iceberg-flink-${flink.version}</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.iceberg</groupId>
-      <artifactId>iceberg-flink-runtime-${flink.version}</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
