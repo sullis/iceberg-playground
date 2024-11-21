@@ -22,7 +22,7 @@
     <slf4j.version>2.0.16</slf4j.version>
     <jackson.version>2.18.1</jackson.version>
     <skip.tests>false</skip.tests>
-    <nessie.version>0.100.1</nessie.version>
+    <nessie.version>0.100.2</nessie.version>
   </properties>
 
   <repositories>
