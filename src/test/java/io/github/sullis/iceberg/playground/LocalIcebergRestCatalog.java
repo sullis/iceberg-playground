@@ -18,6 +18,7 @@ import org.apache.iceberg.rest.responses.ConfigResponse;
 
 public class LocalIcebergRestCatalog {
   private RESTCatalog restCatalog;
+  private LocalIcebergCatalog localCatalog;
   private com.sun.net.httpserver.HttpServer httpServer;
   private static final ObjectMapper MAPPER = initObjectMapper();
 
@@ -28,7 +29,7 @@ public class LocalIcebergRestCatalog {
   }
 
   public LocalIcebergRestCatalog() {
-
+    localCatalog = new LocalIcebergCatalog();
     try {
       httpServer = HttpServer.create(new InetSocketAddress(0), 10);
       httpServer.createContext("/v1/config").setHandler(new HttpHandler() {
@@ -43,7 +44,7 @@ public class LocalIcebergRestCatalog {
                       CatalogProperties.CACHE_ENABLED,
                       "false",
                       CatalogProperties.WAREHOUSE_LOCATION,
-                      "todo:warehouse"))
+                      localCatalog.getWarehouseLocation()))
               .build();
           String json = MAPPER.writeValueAsString(configResponse);
           OutputStream out = exchange.getResponseBody();
