@@ -118,6 +118,10 @@ public class LocalIcebergCatalog {
   }
 
   public void stop() {
+    if (isStopped()) {
+      return;
+    }
+
     if (minio != null) {
       minio.stop();
     }
