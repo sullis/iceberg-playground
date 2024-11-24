@@ -112,7 +112,9 @@ public class LocalIcebergCatalog {
           AwsClientProperties.CLIENT_REGION, REGION.id()
     ));
     this.catalog = jdbc;
-    this.status.set(Status.STARTED);
+    if (!this.status.compareAndSet(Status.STARTING, Status.STARTED)) {
+      throw new IllegalStateException("unable to complete start()");
+    }
   }
 
   public void stop() {
