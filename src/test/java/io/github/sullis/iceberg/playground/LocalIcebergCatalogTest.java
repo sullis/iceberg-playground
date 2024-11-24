@@ -15,7 +15,6 @@ import org.junit.Test;
 import static org.apache.iceberg.types.Types.NestedField.required;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public class LocalIcebergCatalogTest {
 
   @Test

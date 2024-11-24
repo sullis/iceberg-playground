@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.aws.AwsClientProperties;
 import org.apache.iceberg.aws.s3.S3FileIO;
@@ -28,6 +29,13 @@ public class LocalIcebergCatalog {
   private File minioDataDir;
   private MinIOContainer minio;
   private Catalog catalog;
+  private final AtomicReference<Status> status = new AtomicReference<>(Status.STOPPED);
+
+  enum Status {
+      STOPPED,
+      STARTING,
+      STARTED
+  }
 
   public LocalIcebergCatalog() {
       this(createTempDirectory());
@@ -69,11 +77,16 @@ public class LocalIcebergCatalog {
   }
 
   public void start() {
+    if (!this.status.compareAndSet(Status.STOPPED, Status.STARTING)) {
+      throw new IllegalStateException("server is not stopped");
+    }
+
     if (minio == null) {
       minio = new MinIOContainer("minio/minio:latest");
       minio.withFileSystemBind(minioDataDir.getAbsolutePath(), "/data",  BindMode.READ_WRITE);
       minio.withEnv("MINIO_DOMAIN", "localhost");
     }
+
     if (!minio.isRunning()) {
       minio.start();
     }
@@ -99,13 +112,18 @@ public class LocalIcebergCatalog {
           AwsClientProperties.CLIENT_REGION, REGION.id()
     ));
     this.catalog = jdbc;
+    this.status.set(Status.STARTED);
   }
 
   public void stop() {
     if (minio != null) {
       minio.stop();
     }
+    this.status.set(Status.STOPPED);
+  }
 
+  public boolean isStopped() {
+    return this.status.get() == Status.STOPPED;
   }
 
   public String getWarehouseLocation() {
