@@ -20,9 +20,7 @@ public class LocalIcebergCatalogTest {
   @Test
   public void happyPath() {
     LocalIcebergCatalog localCatalog = new LocalIcebergCatalog();
-    assertThat(localCatalog.getLocalDirectory())
-        .exists()
-        .isDirectory();
+    assertThat(localCatalog.getLocalDirectory()).exists().isDirectory();
 
     localCatalog.start();
 
@@ -40,34 +38,35 @@ public class LocalIcebergCatalogTest {
     }
 
     localCatalog.stop();
-    localCatalog.start();
+    assertThat(localCatalog.isStopped()).isTrue();
 
-    File localDir = localCatalog.getLocalDirectory();
+    for (int i = 0; i < 2; i++) {
+      localCatalog.start();
+      assertThat(localCatalog.isStopped()).isFalse();
 
-    assertThat(localDir)
-        .exists()
-        .isDirectory();
+      File localDir = localCatalog.getLocalDirectory();
+      assertThat(localDir).exists().isDirectory();
 
-    {
-      Catalog catalog = localCatalog.getCatalog();
-      Table loaded = catalog.loadTable(tableIdentifier);
-      assertThat(loaded).isNotNull();
-      assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
-      assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
+      {
+        Catalog catalog = localCatalog.getCatalog();
+        Table loaded = catalog.loadTable(tableIdentifier);
+        assertThat(loaded).isNotNull();
+        assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
+        assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
+      }
+
+      localCatalog.stop();
+
+      localCatalog = new LocalIcebergCatalog(localDir);
+      localCatalog.start();
+      {
+        Catalog catalog = localCatalog.getCatalog();
+        Table loaded = catalog.loadTable(tableIdentifier);
+        assertThat(loaded).isNotNull();
+        assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
+        assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
+      }
+      localCatalog.stop();
     }
-
-    localCatalog.stop();
-
-    localCatalog = new LocalIcebergCatalog(localDir);
-    localCatalog.start();
-    {
-      Catalog catalog = localCatalog.getCatalog();
-      Table loaded = catalog.loadTable(tableIdentifier);
-      assertThat(loaded).isNotNull();
-      assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
-      assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
-    }
-    localCatalog.stop();
-
   }
 }
