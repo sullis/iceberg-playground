@@ -27,6 +27,7 @@ public class LocalIcebergCatalog {
   private final String warehouseLocation = "s3://" + s3BucketName + "/warehouse";
   private File localDir;
   private File minioDataDir;
+  private File h2Dir;
   private MinIOContainer minio;
   private Catalog catalog;
   private final AtomicReference<Status> status = new AtomicReference<>(Status.STOPPED);
@@ -46,6 +47,8 @@ public class LocalIcebergCatalog {
     this.localDir.mkdirs();
     this.minioDataDir = new File(this.localDir, "minio-data");
     this.minioDataDir.mkdirs();
+    this.h2Dir = new File(this.localDir, "h2db-data");
+    this.h2Dir.mkdirs();
   }
 
   private static File createTempDirectory() {
@@ -78,7 +81,7 @@ public class LocalIcebergCatalog {
 
   public void start() {
     if (!this.status.compareAndSet(Status.STOPPED, Status.STARTING)) {
-      throw new IllegalStateException("server is not stopped");
+      throw new IllegalStateException("Cannot start. status=" + this.status.get());
     }
 
     if (minio == null) {
@@ -87,9 +90,7 @@ public class LocalIcebergCatalog {
       minio.withEnv("MINIO_DOMAIN", "localhost");
     }
 
-    if (!minio.isRunning()) {
-      minio.start();
-    }
+    minio.start();
 
     try (S3Client s3 = createS3Client()) {
       try {
@@ -112,6 +113,7 @@ public class LocalIcebergCatalog {
           AwsClientProperties.CLIENT_REGION, REGION.id()
     ));
     this.catalog = jdbc;
+
     if (!this.status.compareAndSet(Status.STARTING, Status.STARTED)) {
       throw new IllegalStateException("unable to complete start()");
     }
@@ -140,13 +142,12 @@ public class LocalIcebergCatalog {
     return catalog;
   }
 
-  private String getH2Dir() {
-      File f = new File(this.localDir, ".h2db");
-      f.mkdirs();
-      return f.getAbsolutePath();
+  public String getJdbcUrl() {
+    return "jdbc:h2:" + this.h2Dir.getAbsolutePath() + ";DATABASE_TO_UPPER=FALSE";
   }
 
-  public String getJdbcUrl() {
-    return "jdbc:h2:" + getH2Dir() + ";DATABASE_TO_UPPER=FALSE";
+  @Override
+  public String toString() {
+    return this.getClass().getName() + " " + this.status;
   }
 }
