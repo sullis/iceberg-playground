@@ -43,6 +43,8 @@ public class LocalIcebergCatalogTest {
           .isEqualTo(loaded.location());
       assertThat(t.schema().schemaId())
           .isEqualTo(loaded.schema().schemaId());
+      assertThat(t.schema().sameSchema(loaded.schema()))
+          .isTrue();
     }
 
     localCatalog.stop();
