@@ -75,8 +75,8 @@ public class LocalIcebergCatalogTest {
         assertThat(loaded).isNotNull();
         assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
         assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
-        assertThat(loaded.schema().columns().stream().map(f -> f.name()))
-            .containsExactly("c1", "c2", "c3");
+        assertThat(loaded.schema().sameSchema(schema))
+            .isTrue();
       }
       localCatalog.stop();
     }
