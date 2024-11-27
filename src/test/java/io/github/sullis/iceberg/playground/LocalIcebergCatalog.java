@@ -125,17 +125,7 @@ public class LocalIcebergCatalog {
     }
 
     JdbcCatalog jdbc = new JdbcCatalog();
-    jdbc.initialize("jdbccatalog",
-        Map.of(
-          CatalogProperties.FILE_IO_IMPL, S3FileIO.class.getName(),
-          CatalogProperties.URI, this.getJdbcUrl(),
-          CatalogProperties.WAREHOUSE_LOCATION, warehouseLocation,
-          S3FileIOProperties.ACCESS_KEY_ID, this.minio.getUserName(),
-          S3FileIOProperties.SECRET_ACCESS_KEY, this.minio.getPassword(),
-          S3FileIOProperties.PATH_STYLE_ACCESS, "true",
-          S3FileIOProperties.ENDPOINT, this.minio.getS3URL(),
-          AwsClientProperties.CLIENT_REGION, REGION.id()
-    ));
+    jdbc.initialize("jdbccatalog", props);
     this.catalog = jdbc;
 
     if (!this.status.compareAndSet(Status.STARTING, Status.STARTED)) {
