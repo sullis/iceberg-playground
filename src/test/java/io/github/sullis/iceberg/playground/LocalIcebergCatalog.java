@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.iceberg.CatalogProperties;
@@ -30,6 +31,7 @@ public class LocalIcebergCatalog {
   private File h2Dir;
   private MinIOContainer minio;
   private Catalog catalog;
+  private final Map<String, String> extraCatalogProperties;
   private final AtomicReference<Status> status = new AtomicReference<>(Status.STOPPED);
 
   enum Status {
@@ -39,16 +41,25 @@ public class LocalIcebergCatalog {
   }
 
   public LocalIcebergCatalog() {
-      this(createTempDirectory());
+      this(createTempDirectory(), new HashMap<>());
+  }
+
+  public LocalIcebergCatalog(final Map<String, String> extraCatalogProps) {
+    this(createTempDirectory(), extraCatalogProps);
   }
 
   public LocalIcebergCatalog(final File localDir) {
+    this(localDir, new HashMap<>());
+  }
+
+  public LocalIcebergCatalog(final File localDir, final Map<String, String> extraCatalogProps) {
     this.localDir = localDir;
     this.localDir.mkdirs();
     this.minioDataDir = new File(this.localDir, "minio-data");
     this.minioDataDir.mkdirs();
     this.h2Dir = new File(this.localDir, "h2db-data");
     this.h2Dir.mkdirs();
+    this.extraCatalogProperties = extraCatalogProps;
   }
 
   private static File createTempDirectory() {
@@ -99,6 +110,17 @@ public class LocalIcebergCatalog {
         s3.createBucket(builder -> builder.bucket(s3BucketName));
       }
     }
+
+    Map<String, String> props = new HashMap<>();
+    props.put(CatalogProperties.FILE_IO_IMPL, S3FileIO.class.getName());
+    props.put(CatalogProperties.URI, this.getJdbcUrl());
+    props.put(CatalogProperties.WAREHOUSE_LOCATION, warehouseLocation);
+    props.put(S3FileIOProperties.ACCESS_KEY_ID, this.minio.getUserName());
+    props.put(S3FileIOProperties.SECRET_ACCESS_KEY, this.minio.getPassword());
+    props.put(S3FileIOProperties.PATH_STYLE_ACCESS, "true");
+    props.put(S3FileIOProperties.ENDPOINT, this.minio.getS3URL());
+    props.put(AwsClientProperties.CLIENT_REGION, REGION.id());
+    props.putAll(this.extraCatalogProperties);
 
     JdbcCatalog jdbc = new JdbcCatalog();
     jdbc.initialize("jdbccatalog",
