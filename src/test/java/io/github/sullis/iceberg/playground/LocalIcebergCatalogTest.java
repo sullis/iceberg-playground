@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.iceberg.AppendFiles;
 import org.apache.iceberg.DataFiles;
+import org.apache.iceberg.MetricsConfig;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
@@ -71,6 +72,7 @@ public class LocalIcebergCatalogTest {
               .schema(schema)
               .createWriterFunc(GenericParquetWriter::buildWriter)
               .overwrite()
+              .metricsConfig(MetricsConfig.forTable(loaded))
               .withSpec(spec)
               .build();
 
