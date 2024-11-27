@@ -1,6 +1,8 @@
 package io.github.sullis.iceberg.playground;
 
 import java.io.File;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import org.apache.iceberg.AppendFiles;
@@ -12,13 +14,14 @@ import org.apache.iceberg.aws.s3.S3FileIO;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
+import org.apache.iceberg.data.GenericRecord;
+import org.apache.iceberg.data.Record;
+import org.apache.iceberg.data.parquet.GenericParquetWriter;
 import org.apache.iceberg.io.DataWriter;
-import org.apache.iceberg.io.FileAppender;
-import org.apache.iceberg.io.FileIO;
+import org.apache.iceberg.io.InputFile;
 import org.apache.iceberg.io.OutputFile;
 import org.apache.iceberg.parquet.Parquet;
 import org.apache.iceberg.types.Types;
-import org.apache.iceberg.parquet.Parquet;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.iceberg.types.Types.NestedField.required;
@@ -35,7 +38,7 @@ public class LocalIcebergCatalogTest {
     localCatalog.start();
 
     final Namespace namespace = Namespace.of("mynamespace");
-    final TableIdentifier tableIdentifier = TableIdentifier.of(namespace, "mytable" + UUID.randomUUID());
+    final TableIdentifier tableIdentifier = TableIdentifier.of(namespace, "mytable");
 
     final var columns = List.of(
         required(1, "text", Types.StringType.get()),
@@ -61,17 +64,35 @@ public class LocalIcebergCatalogTest {
       assertThat(t.schema().sameSchema(loaded.schema()))
           .isTrue();
 
-      FileIO io = loaded.io();
-      OutputFile outputFile = io.newOutputFile(loaded.location() + "/foobar/" + System.currentTimeMillis());
-      var outputStream = outputFile.create();
+      OutputFile outputFile = loaded.io().newOutputFile(loaded.location() + "/foobar/" + UUID.randomUUID() + ".parquet");
 
-      FileAppender appender = Parquet.write(outputFile).forTable(loaded).build();
+      DataWriter<Record> dataWriter =
+          Parquet.writeData(outputFile)
+              .schema(schema)
+              .createWriterFunc(GenericParquetWriter::buildWriter)
+              .overwrite()
+              .withSpec(spec)
+              .build();
+
+      GenericRecord record = GenericRecord.create(schema);
+      record.setField("text", "Hello world");
+      record.setField("count", 555);
+      record.setField("amazing", Boolean.TRUE);
+      record.setField("event_timestamp", OffsetDateTime.of(2005, 12, 1, 0, 0, 0, 0, ZoneOffset.ofHours(5)));
+
+      dataWriter.write(record);
+      dataWriter.close();
 
       AppendFiles appendFiles = loaded.newAppend();
 
+      InputFile inputFile = outputFile.toInputFile();
+      System.out.println("location: " + inputFile.location());
+
       appendFiles.appendFile(DataFiles.builder(spec)
-          .withInputFile(outputFile.toInputFile())
+          .withInputFile(inputFile)
+          .withRecordCount(1)
           .build());
+      appendFiles.commit();
     }
 
     localCatalog.stop();
