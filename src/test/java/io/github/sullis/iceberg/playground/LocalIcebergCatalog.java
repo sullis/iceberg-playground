@@ -120,7 +120,9 @@ public class LocalIcebergCatalog {
     props.put(S3FileIOProperties.PATH_STYLE_ACCESS, "true");
     props.put(S3FileIOProperties.ENDPOINT, this.minio.getS3URL());
     props.put(AwsClientProperties.CLIENT_REGION, REGION.id());
-    props.putAll(this.extraCatalogProperties);
+    if (this.extraCatalogProperties != null) {
+      props.putAll(this.extraCatalogProperties);
+    }
 
     JdbcCatalog jdbc = new JdbcCatalog();
     jdbc.initialize("jdbccatalog",
