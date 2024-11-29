@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 
 
 public class LocalIcebergCatalog {
-  private static final Region REGION = Region.US_EAST_1;
+  private static final Region AWS_REGION = Region.US_EAST_1;
   private final String s3BucketName = "test-bucket";
   private final String warehouseLocation = "s3://" + s3BucketName + "/warehouse";
   private File localDir;
@@ -81,7 +81,7 @@ public class LocalIcebergCatalog {
   public S3Client createS3Client() {
     final URI uri = URI.create(minio.getS3URL());
     return S3Client.builder()
-      .region(REGION)
+      .region(AWS_REGION)
       .credentialsProvider(
         StaticCredentialsProvider.create(
             AwsBasicCredentials.create(minio.getUserName(), minio.getPassword())))
@@ -119,7 +119,7 @@ public class LocalIcebergCatalog {
     props.put(S3FileIOProperties.SECRET_ACCESS_KEY, this.minio.getPassword());
     props.put(S3FileIOProperties.PATH_STYLE_ACCESS, "true");
     props.put(S3FileIOProperties.ENDPOINT, this.minio.getS3URL());
-    props.put(AwsClientProperties.CLIENT_REGION, REGION.id());
+    props.put(AwsClientProperties.CLIENT_REGION, AWS_REGION.id());
     if (this.extraCatalogProperties != null) {
       props.putAll(this.extraCatalogProperties);
     }
