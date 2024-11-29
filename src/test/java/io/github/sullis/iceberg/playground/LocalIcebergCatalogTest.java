@@ -24,6 +24,7 @@ import org.apache.iceberg.io.OutputFile;
 import org.apache.iceberg.parquet.Parquet;
 import org.apache.iceberg.types.Types;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import static org.apache.iceberg.types.Types.NestedField.required;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -127,8 +128,16 @@ public class LocalIcebergCatalogTest {
         assertThat(loaded.location()).startsWith("s3://test-bucket/iceberg/mynamespace/mytable");
         assertThat(loaded.schema().sameSchema(schema))
             .isTrue();
+        try (S3Client s3 = localCatalog.createS3Client()) {
+          assertBucketExists(s3, localCatalog.getS3BucketName());
+        }
       }
       localCatalog.stop();
     }
+  }
+
+  private static void assertBucketExists(S3Client s3Client, String bucketName) {
+    var response = s3Client.headBucket(req -> req.bucket(bucketName));
+    assertThat(response.sdkHttpResponse().isSuccessful()).isTrue();
   }
 }
