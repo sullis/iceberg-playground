@@ -112,7 +112,7 @@ public class LocalIcebergCatalogTest {
         Table loaded = catalog.loadTable(tableIdentifier);
         assertThat(loaded).isNotNull();
         assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
-        assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
+        assertThat(loaded.location()).startsWith("s3://test-bucket/iceberg/mynamespace/mytable");
       }
 
       localCatalog.stop();
@@ -124,7 +124,7 @@ public class LocalIcebergCatalogTest {
         Table loaded = catalog.loadTable(tableIdentifier);
         assertThat(loaded).isNotNull();
         assertThat(loaded.io()).isInstanceOf(S3FileIO.class);
-        assertThat(loaded.location()).startsWith("s3://test-bucket/warehouse/mynamespace/mytable");
+        assertThat(loaded.location()).startsWith("s3://test-bucket/iceberg/mynamespace/mytable");
         assertThat(loaded.schema().sameSchema(schema))
             .isTrue();
       }

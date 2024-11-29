@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 public class LocalIcebergCatalog {
   private static final Region AWS_REGION = Region.US_EAST_1;
   private final String s3BucketName = "test-bucket";
-  private final String warehouseLocation = "s3://" + s3BucketName + "/warehouse";
+  private final String warehouseLocation = "s3://" + s3BucketName + "/iceberg";
   private File localDir;
   private File minioDataDir;
   private File h2Dir;
