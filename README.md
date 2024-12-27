@@ -6,6 +6,7 @@
 - [youtube channel](https://www.youtube.com/@IcebergMeetup/videos)
 
 # Videos
+- [AWS re:Invent 2024 - Efficient incremental processing with Apache Iceberg at Netflix](https://www.youtube.com/watch?v=s1ySnxVg5rk)
 - [AWS re:Invent 2023 - Netflix’s journey to an Apache Iceberg–only data lake](https://www.youtube.com/watch?v=jMFMEk8jFu8)
 - [Unbundling the Data Warehouse: The Case for Independent Storage](https://www.youtube.com/watch?v=CmEIJ-lagVU) - Jason Reid, Tabular, 2024
 - [2018: Iceberg, a fast table format for s3](https://www.youtube.com/watch?v=nWwQMlrjhy0)
