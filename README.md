@@ -1,6 +1,6 @@
 # iceberg-playground
 
-[Apache Iceberg](https://iceberg.apache.org/)
+[Apache Iceberg](https://iceberg.apache.org/) playground
 
 # Iceberg meetups
 - [youtube channel](https://www.youtube.com/@IcebergMeetup/videos)
