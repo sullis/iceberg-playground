@@ -16,3 +16,6 @@
 - [Apache Iceberg optimization: Solving the small files problem in Amazon EMR](https://aws.amazon.com/blogs/big-data/apache-iceberg-optimization-solving-the-small-files-problem-in-amazon-emr/)
 - [Fine-Tuning Your Iceberg Table’s Data Files](https://www.dremio.com/blog/compaction-in-apache-iceberg-fine-tuning-your-iceberg-tables-data-files/)
 - [Tame the small files problem](https://www.youtube.com/watch?v=GJplmOO7ULA) - Dremio 2023
+
+# Amazon S3 Tables
+- [announcement](https://aws.amazon.com/about-aws/whats-new/2024/12/amazon-s3-tables-apache-iceberg-tables-analytics-workloads/)
