@@ -23,3 +23,6 @@
 # Python:  Iceberg Table Metrics Collector
 - [github](https://github.com/soumilshah1995/Iceberg-Table-Metrics-Collector)
 - [youtube](https://www.youtube.com/watch?v=kUd0jIItW7g)
+
+# AWS Samples
+- [monitoring-apache-iceberg-table-metadata-layer](https://github.com/aws-samples/monitoring-apache-iceberg-table-metadata-layer)
