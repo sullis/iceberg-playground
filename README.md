@@ -20,6 +20,7 @@
 
 # Iceberg metadata problem
 - [hardcoded paths](https://github.com/apache/iceberg/issues/1617)
+- [relative file io](https://github.com/lightmelodies/iceberg-relative-io)
   
 # Small files problem
 - [Solving the Small File Problem in Iceberg Tables](https://medium.com/ancestry-product-and-technology/solving-the-small-file-problem-in-iceberg-tables-6c31a295f724)
