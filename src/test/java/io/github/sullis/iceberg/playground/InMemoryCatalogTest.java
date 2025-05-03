@@ -103,6 +103,14 @@ public class InMemoryCatalogTest {
 
     FileIO baseIO = baseTable.io();
     InputFile metadataFile = baseIO.newInputFile(metadata.metadataFileLocation());
+
+    assertThat(metadataFile.exists()).isTrue();
+
+    assertThat(metadataFile.location())
+            .startsWith("/test")
+            .contains("/foobar/metadata")
+            .endsWith(".metadata.json");
+
     String metadataContent = new String(metadataFile.newStream().readAllBytes(), StandardCharsets.UTF_8);
     assertThat(metadataContent)
         .startsWith("{")
