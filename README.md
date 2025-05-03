@@ -19,3 +19,7 @@
 
 # Amazon S3 Tables
 - [announcement](https://aws.amazon.com/about-aws/whats-new/2024/12/amazon-s3-tables-apache-iceberg-tables-analytics-workloads/)
+
+# Python:  Iceberg Table Metrics Collector
+- [github](https://github.com/soumilshah1995/Iceberg-Table-Metrics-Collector)
+- [youtube](https://www.youtube.com/watch?v=kUd0jIItW7g)
