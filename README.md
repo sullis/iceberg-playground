@@ -12,7 +12,7 @@
 - [2018: Iceberg, a fast table format for s3](https://www.youtube.com/watch?v=nWwQMlrjhy0)
 
 # Iceberg v3
-- [April 2025 meetup](https://www.youtube.com/watch?v=WpcrVlktSyE)
+- [April 2025 meetup](https://www.youtube.com/watch?v=WpcrVlktSyE) - Fokko Driesprong
 
 # Small files problem
 - [Solving the Small File Problem in Iceberg Tables](https://medium.com/ancestry-product-and-technology/solving-the-small-file-problem-in-iceberg-tables-6c31a295f724)
