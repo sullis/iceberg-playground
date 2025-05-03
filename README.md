@@ -2,6 +2,9 @@
 
 [Apache Iceberg](https://iceberg.apache.org/) playground
 
+# Iceberg Summit 2025
+- [youtube playlist](https://www.youtube.com/watch?v=3N2KEUs7224&list=PLkifVhhWtccxMcqWlXXFvjJybisFF7ESh)
+
 # Iceberg meetups
 - [youtube channel](https://www.youtube.com/@IcebergMeetup/videos)
 
