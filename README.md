@@ -23,6 +23,7 @@
 - [relative file io](https://github.com/lightmelodies/iceberg-relative-io)
 - [article: Iceberg's portability problem](https://performancede.substack.com/p/icebergs-portability-problem)
 - [Dremio article](https://www.dremio.com/blog/disaster-recovery-for-apache-iceberg-tables-restoring-from-backup-and-getting-back-online/)
+- [Iceberg Spark: rewrite_table_path](https://github.com/apache/iceberg/blob/696a72c0f88c3af1096e716b196f1609da34e50d/spark/v3.4/spark/src/main/java/org/apache/iceberg/spark/procedures/SparkProcedures.java)
   
 # Small files problem
 - [Solving the Small File Problem in Iceberg Tables](https://medium.com/ancestry-product-and-technology/solving-the-small-file-problem-in-iceberg-tables-6c31a295f724)
