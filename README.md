@@ -18,10 +18,11 @@
 # Iceberg v3
 - [April 2025 meetup](https://www.youtube.com/watch?v=WpcrVlktSyE) - Fokko Driesprong
 
-# Iceberg metadata problem
+# Iceberg metadata problem: absolute paths
 - [hardcoded paths](https://github.com/apache/iceberg/issues/1617)
 - [relative file io](https://github.com/lightmelodies/iceberg-relative-io)
 - [article: Iceberg's portability problem](https://performancede.substack.com/p/icebergs-portability-problem)
+- [Dremio article](https://www.dremio.com/blog/disaster-recovery-for-apache-iceberg-tables-restoring-from-backup-and-getting-back-online/)
   
 # Small files problem
 - [Solving the Small File Problem in Iceberg Tables](https://medium.com/ancestry-product-and-technology/solving-the-small-file-problem-in-iceberg-tables-6c31a295f724)
