@@ -11,6 +11,9 @@
 - [Unbundling the Data Warehouse: The Case for Independent Storage](https://www.youtube.com/watch?v=CmEIJ-lagVU) - Jason Reid, Tabular, 2024
 - [2018: Iceberg, a fast table format for s3](https://www.youtube.com/watch?v=nWwQMlrjhy0)
 
+# Iceberg v3
+- [April 2025 meetup](https://www.youtube.com/watch?v=WpcrVlktSyE)
+
 # Small files problem
 - [Solving the Small File Problem in Iceberg Tables](https://medium.com/ancestry-product-and-technology/solving-the-small-file-problem-in-iceberg-tables-6c31a295f724)
 - [Apache Iceberg optimization: Solving the small files problem in Amazon EMR](https://aws.amazon.com/blogs/big-data/apache-iceberg-optimization-solving-the-small-files-problem-in-amazon-emr/)
