@@ -43,11 +43,11 @@ public class InMemoryCatalogTest {
     catalog = new InMemoryCatalog();
     catalog.initialize(catalogName, new HashMap<>());
     catalog.createNamespace(namespace);
-    var listTablesResult = catalog.listTables(namespace);
+    List<TableIdentifier> listTablesResult = catalog.listTables(namespace);
     assertThat(listTablesResult).isEmpty();
 
     TableIdentifier tableId = TableIdentifier.of(namespace, tableName);
-    var columns = List.of(required(-1, "c1", Types.StringType.get()));
+    List<Types.NestedField> columns = List.of(required(-1, "c1", Types.StringType.get()));
     final Schema schema = new Schema(columns);
     Table table = catalog.createTable(tableId, schema);
     assertThat(catalog.listTables(namespace)).hasSize(1);

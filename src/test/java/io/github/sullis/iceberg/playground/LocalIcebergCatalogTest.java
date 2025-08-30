@@ -25,6 +25,7 @@ import org.apache.iceberg.parquet.Parquet;
 import org.apache.iceberg.types.Types;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 
 import static org.apache.iceberg.types.Types.NestedField.required;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +43,7 @@ public class LocalIcebergCatalogTest {
     final Namespace namespace = Namespace.of("mynamespace");
     final TableIdentifier tableIdentifier = TableIdentifier.of(namespace, "mytable");
 
-    final var columns = List.of(
+    final List<Types.NestedField> columns = List.of(
         required(1, "text", Types.StringType.get()),
         required(2, "count", Types.IntegerType.get()),
         required(3, "amazing", Types.BooleanType.get()),
@@ -137,7 +138,7 @@ public class LocalIcebergCatalogTest {
   }
 
   private static void assertBucketExists(S3Client s3Client, String bucketName) {
-    var response = s3Client.headBucket(req -> req.bucket(bucketName));
+    HeadBucketResponse response = s3Client.headBucket(req -> req.bucket(bucketName));
     assertThat(response.sdkHttpResponse().isSuccessful()).isTrue();
   }
 }
