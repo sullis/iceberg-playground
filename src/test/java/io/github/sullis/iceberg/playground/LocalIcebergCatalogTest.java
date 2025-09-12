@@ -72,7 +72,7 @@ public class LocalIcebergCatalogTest {
       DataWriter<Record> dataWriter =
           Parquet.writeData(outputFile)
               .schema(schema)
-              .createWriterFunc(GenericParquetWriter::buildWriter)
+              .createWriterFunc(GenericParquetWriter::create)
               .overwrite()
               .metricsConfig(MetricsConfig.forTable(loaded))
               .withSpec(spec)
