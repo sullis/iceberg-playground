@@ -41,3 +41,7 @@
 
 # AWS Samples
 - [monitoring-apache-iceberg-table-metadata-layer](https://github.com/aws-samples/monitoring-apache-iceberg-table-metadata-layer)
+
+# Moving data
+- [9 ways to move data kafka to iceberg](https://blog.streambased.io/p/the-9-ways-to-move-data-kafka-iceberg)
+
