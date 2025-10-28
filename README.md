@@ -45,3 +45,7 @@
 # Moving data
 - [9 ways to move data kafka to iceberg](https://blog.streambased.io/p/the-9-ways-to-move-data-kafka-iceberg)
 
+# Commit conflicts
+- [ryft: handling Iceberg commit conflicts](https://www.ryft.io/blog/handling-commit-conflicts-in-apache-iceberg-patterns-and-fixes)
+
+
