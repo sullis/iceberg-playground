@@ -20,7 +20,7 @@
     <logback.version>1.5.20</logback.version>
     <iceberg.version>1.10.0</iceberg.version>
     <slf4j.version>2.0.17</slf4j.version>
-    <jackson.version>2.20.0</jackson.version>
+    <jackson.version>2.20.1</jackson.version>
     <skip.tests>false</skip.tests>
   </properties>
 
