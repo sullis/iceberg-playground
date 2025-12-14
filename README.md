@@ -48,4 +48,7 @@
 # Commit conflicts
 - [ryft: handling Iceberg commit conflicts](https://www.ryft.io/blog/handling-commit-conflicts-in-apache-iceberg-patterns-and-fixes)
 
+# Warpstream and Iceberg
+- [virtual metadata](https://www.warpstream.com/blog/what-react-and-apache-iceberg-have-in-common-scaling-iceberg-with-virtual-metadata)
+
 
