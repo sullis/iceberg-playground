@@ -17,7 +17,7 @@
 
   <properties>
     <junit.version>6.0.1</junit.version>
-    <logback.version>1.5.21</logback.version>
+    <logback.version>1.5.23</logback.version>
     <iceberg.version>1.10.0</iceberg.version>
     <slf4j.version>2.0.17</slf4j.version>
     <jackson.version>2.20.1</jackson.version>
