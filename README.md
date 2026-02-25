@@ -51,4 +51,7 @@
 # Warpstream and Iceberg
 - [virtual metadata](https://www.warpstream.com/blog/what-react-and-apache-iceberg-have-in-common-scaling-iceberg-with-virtual-metadata)
 
+# Apache NiFi and Iceberg
+- [How Apache NiFi 2 Integrates Apache Iceberg](https://exceptionfactory.com/posts/2026/01/26/how-apache-nifi-2-integrates-apache-iceberg/)
+
 
