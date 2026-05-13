@@ -19,7 +19,7 @@
     <junit.version>6.0.3</junit.version>
     <logback.version>1.5.32</logback.version>
     <iceberg.version>1.10.1</iceberg.version>
-    <slf4j.version>2.0.17</slf4j.version>
+    <slf4j.version>2.0.18</slf4j.version>
     <jackson.version>2.21.3</jackson.version>
     <skip.tests>false</skip.tests>
   </properties>
