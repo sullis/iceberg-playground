@@ -168,6 +168,12 @@
       <artifactId>s3tables</artifactId>
     </dependency>
     <dependency>
+      <!-- s3-tables-catalog-for-iceberg-runtime declares the unshaded ApacheSdkHttpService in META-INF/services -->
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>apache-client</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>software.amazon.s3tables</groupId>
       <artifactId>s3-tables-catalog-for-iceberg-runtime</artifactId>
       <version>0.1.8</version>
